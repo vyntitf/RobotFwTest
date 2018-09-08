@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20180903 00:54:16.941" generator="Robot 3.0.4 (Python 2.7.15 on win32)">
+<suite source="F:\OneDrive\WORKSPACE\Test" id="s1" name="Test">
+<suite source="F:\OneDrive\WORKSPACE\Test\google_api.robot" id="s1-s1" name="Google Api">
+<kw type="setup" name="Create Session" library="RequestsLibrary">
+<doc>Create Session: create a HTTP session to a server</doc>
+<arguments>
+<arg>googleapi</arg>
+<arg>http://maps.googleapis.com/</arg>
+</arguments>
+<msg timestamp="20180903 00:54:17.062" level="INFO">Creating Session using : alias=googleapi, url=http://maps.googleapis.com/, headers={},                     cookies=None, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<status status="PASS" endtime="20180903 00:54:17.062" starttime="20180903 00:54:17.061"></status>
+</kw>
+<test id="s1-s1-t1" name="Demonstrate API testing and XML response">
+<kw name="Postcode should match city in XML response" library="google_api_kw">
+<arguments>
+<arg>00500</arg>
+<arg>Helsinki</arg>
+</arguments>
+<kw name="Get Request" library="RequestsLibrary">
+<doc>Send a GET request on the session object found using the</doc>
+<arguments>
+<arg>googleapi</arg>
+<arg>maps/api/geocode/xml?address=${postal_code},Finland</arg>
+</arguments>
+<assign>
+<var>${response}</var>
+</assign>
+<msg timestamp="20180903 00:54:17.152" level="INFO">Get Request using : alias=googleapi, uri=maps/api/geocode/xml?address=00500,Finland, headers=None json=None</msg>
+<msg timestamp="20180903 00:54:17.153" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<status status="PASS" endtime="20180903 00:54:17.153" starttime="20180903 00:54:17.063"></status>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<arguments>
+<arg>${response.status_code}</arg>
+<arg>200</arg>
+</arguments>
+<msg timestamp="20180903 00:54:17.154" level="INFO">Argument types are:
+&lt;type 'int'&gt;
+&lt;type 'unicode'&gt;</msg>
+<status status="PASS" endtime="20180903 00:54:17.154" starttime="20180903 00:54:17.153"></status>
+</kw>
+<kw name="Parse Xml" library="XML">
+<doc>Parses the given XML file or string into an element structure.</doc>
+<arguments>
+<arg>${response.text}</arg>
+</arguments>
+<assign>
+<var>${xml_response}</var>
+</assign>
+<msg timestamp="20180903 00:54:17.155" level="INFO">${xml_response} = &lt;Element 'GeocodeResponse' at 0x00000000043A4150&gt;</msg>
+<status status="PASS" endtime="20180903 00:54:17.155" starttime="20180903 00:54:17.154"></status>
+</kw>
+<kw name="Get Element Text" library="XML">
+<doc>Returns all text of the element, possibly whitespace normalized.</doc>
+<arguments>
+<arg>${response.text}</arg>
+<arg>status</arg>
+</arguments>
+<assign>
+<var>${status_element}</var>
+</assign>
+<msg timestamp="20180903 00:54:17.156" level="INFO">${status_element} = OK</msg>
+<status status="PASS" endtime="20180903 00:54:17.157" starttime="20180903 00:54:17.156"></status>
+</kw>
+<kw name="Should Be Equal As Strings" library="BuiltIn">
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<arguments>
+<arg>${status_element}</arg>
+<arg>OK</arg>
+</arguments>
+<msg timestamp="20180903 00:54:17.157" level="INFO">Argument types are:
+&lt;type 'str'&gt;
+&lt;type 'unicode'&gt;</msg>
+<status status="PASS" endtime="20180903 00:54:17.157" starttime="20180903 00:54:17.157"></status>
+</kw>
+<kw name="Get Element Text" library="XML">
+<doc>Returns all text of the element, possibly whitespace normalized.</doc>
+<arguments>
+<arg>${xml_response}</arg>
+<arg>result/formatted_address</arg>
+</arguments>
+<assign>
+<var>${returned_address}</var>
+</assign>
+<msg timestamp="20180903 00:54:17.158" level="INFO">${returned_address} = 00500 Helsinki, Finland</msg>
+<status status="PASS" endtime="20180903 00:54:17.158" starttime="20180903 00:54:17.158"></status>
+</kw>
+<kw name="Fetch City From Formatted Address" library="google_api_kw">
+<arguments>
+<arg>${returned_address}</arg>
+</arguments>
+<assign>
+<var>${returned_city}</var>
+</assign>
+<kw name="Fetch From Left" library="String">
+<doc>Returns contents of the ``string`` before the first occurrence of ``marker``.</doc>
+<arguments>
+<arg>${raw_address}</arg>
+<arg>,</arg>
+</arguments>
+<assign>
+<var>${addr}</var>
+</assign>
+<msg timestamp="20180903 00:54:17.160" level="INFO">${addr} = 00500 Helsinki</msg>
+<status status="PASS" endtime="20180903 00:54:17.161" starttime="20180903 00:54:17.159"></status>
+</kw>
+<kw name="Fetch From Right" library="String">
+<doc>Returns contents of the ``string`` after the last occurrence of ``marker``.</doc>
+<arguments>
+<arg>${addr}</arg>
+<arg>${SPACE}</arg>
+</arguments>
+<assign>
+<var>${addr}</var>
+</assign>
+<msg timestamp="20180903 00:54:17.162" level="INFO">${addr} = Helsinki</msg>
+<status status="PASS" endtime="20180903 00:54:17.163" starttime="20180903 00:54:17.161"></status>
+</kw>
+<msg timestamp="20180903 00:54:17.163" level="INFO">${returned_city} = Helsinki</msg>
+<status status="PASS" endtime="20180903 00:54:17.164" starttime="20180903 00:54:17.159"></status>
+</kw>
+<kw name="Should Be Equal As Strings" library="BuiltIn">
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<arguments>
+<arg>${returned_city}</arg>
+<arg>${expected_city}</arg>
+</arguments>
+<status status="PASS" endtime="20180903 00:54:17.167" starttime="20180903 00:54:17.166"></status>
+</kw>
+<status status="PASS" endtime="20180903 00:54:17.168" starttime="20180903 00:54:17.063"></status>
+</kw>
+<kw name="Postcode should match city in XML response" library="google_api_kw">
+<arguments>
+<arg>33100</arg>
+<arg>Tampere</arg>
+</arguments>
+<kw name="Get Request" library="RequestsLibrary">
+<doc>Send a GET request on the session object found using the</doc>
+<arguments>
+<arg>googleapi</arg>
+<arg>maps/api/geocode/xml?address=${postal_code},Finland</arg>
+</arguments>
+<assign>
+<var>${response}</var>
+</assign>
+<msg timestamp="20180903 00:54:17.225" level="INFO">Get Request using : alias=googleapi, uri=maps/api/geocode/xml?address=33100,Finland, headers=None json=None</msg>
+<msg timestamp="20180903 00:54:17.226" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<status status="PASS" endtime="20180903 00:54:17.226" starttime="20180903 00:54:17.169"></status>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<arguments>
+<arg>${response.status_code}</arg>
+<arg>200</arg>
+</arguments>
+<msg timestamp="20180903 00:54:17.228" level="INFO">Argument types are:
+&lt;type 'int'&gt;
+&lt;type 'unicode'&gt;</msg>
+<status status="PASS" endtime="20180903 00:54:17.229" starttime="20180903 00:54:17.227"></status>
+</kw>
+<kw name="Parse Xml" library="XML">
+<doc>Parses the given XML file or string into an element structure.</doc>
+<arguments>
+<arg>${response.text}</arg>
+</arguments>
+<assign>
+<var>${xml_response}</var>
+</assign>
+<msg timestamp="20180903 00:54:17.231" level="INFO">${xml_response} = &lt;Element 'GeocodeResponse' at 0x00000000043B5D20&gt;</msg>
+<status status="PASS" endtime="20180903 00:54:17.231" starttime="20180903 00:54:17.229"></status>
+</kw>
+<kw name="Get Element Text" library="XML">
+<doc>Returns all text of the element, possibly whitespace normalized.</doc>
+<arguments>
+<arg>${response.text}</arg>
+<arg>status</arg>
+</arguments>
+<assign>
+<var>${status_element}</var>
+</assign>
+<msg timestamp="20180903 00:54:17.233" level="INFO">${status_element} = OVER_QUERY_LIMIT</msg>
+<status status="PASS" endtime="20180903 00:54:17.233" starttime="20180903 00:54:17.232"></status>
+</kw>
+<kw name="Should Be Equal As Strings" library="BuiltIn">
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<arguments>
+<arg>${status_element}</arg>
+<arg>OK</arg>
+</arguments>
+<msg timestamp="20180903 00:54:17.235" level="INFO">Argument types are:
+&lt;type 'str'&gt;
+&lt;type 'unicode'&gt;</msg>
+<msg timestamp="20180903 00:54:17.236" level="FAIL">OVER_QUERY_LIMIT != OK</msg>
+<status status="FAIL" endtime="20180903 00:54:17.236" starttime="20180903 00:54:17.234"></status>
+</kw>
+<status status="FAIL" endtime="20180903 00:54:17.237" starttime="20180903 00:54:17.168"></status>
+</kw>
+<status status="FAIL" endtime="20180903 00:54:17.238" critical="yes" starttime="20180903 00:54:17.062">OVER_QUERY_LIMIT != OK</status>
+</test>
+<kw type="teardown" name="Delete All Sessions" library="RequestsLibrary">
+<doc>Removes all the session objects</doc>
+<msg timestamp="20180903 00:54:17.240" level="INFO">Delete All Sessions</msg>
+<status status="PASS" endtime="20180903 00:54:17.240" starttime="20180903 00:54:17.239"></status>
+</kw>
+<status status="FAIL" endtime="20180903 00:54:17.241" starttime="20180903 00:54:16.980"></status>
+</suite>
+<status status="FAIL" endtime="20180903 00:54:17.243" starttime="20180903 00:54:16.961"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="0">Critical Tests</stat>
+<stat fail="1" pass="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="1" id="s1" name="Test" pass="0">Test</stat>
+<stat fail="1" id="s1-s1" name="Google Api" pass="0">Test.Google Api</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
